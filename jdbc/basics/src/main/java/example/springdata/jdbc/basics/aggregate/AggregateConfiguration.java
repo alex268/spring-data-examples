@@ -15,11 +15,11 @@
  */
 package example.springdata.jdbc.basics.aggregate;
 
-import static java.util.Arrays.*;
-
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.sql.DataSource;
 
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +36,7 @@ import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.lang.Nullable;
 
-import javax.sql.DataSource;
+import static java.util.Arrays.*;
 
 /**
  * @author Jens Schauder
@@ -99,7 +99,7 @@ public class AggregateConfiguration extends AbstractJdbcConfiguration {
 		return new NamedParameterJdbcTemplate(operations);
 	}
 
-	@Bean
+    @Bean
 	DataSourceInitializer initializer(DataSource dataSource) {
 
 		var initializer = new DataSourceInitializer();
