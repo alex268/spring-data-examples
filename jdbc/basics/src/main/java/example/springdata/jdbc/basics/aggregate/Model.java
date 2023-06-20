@@ -15,14 +15,14 @@
  */
 package example.springdata.jdbc.basics.aggregate;
 
-import lombok.AccessLevel;
-import lombok.Value;
-import lombok.With;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 /**
  * One of potentially multiple models that can be build from a single {@link LegoSet}. No getters or setters needed.
  *
  * @author Jens Schauder
  */
-public record Model(String name, String description) {
+@Table("MODEL")
+public record Model(@Column("NAME") String name, String description) {
 }

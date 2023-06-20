@@ -15,16 +15,15 @@
  */
 package example.springdata.jdbc.basics.simpleentity;
 
-import static org.assertj.core.api.Assertions.*;
-
 import example.springdata.jdbc.basics.Output;
 import example.springdata.jdbc.basics.aggregate.AgeGroup;
-
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureJdbc;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Demonstrates simple CRUD operations with a simple entity without any references.
@@ -38,7 +37,12 @@ class SimpleEntityTests {
 
 	@Autowired CategoryRepository repository;
 
-	@Test
+    @BeforeEach
+    public void clearRepository() {
+        repository.deleteAll();
+    }
+
+    @Test
 	void exerciseRepositoryForSimpleEntity() {
 
 		// create some categories

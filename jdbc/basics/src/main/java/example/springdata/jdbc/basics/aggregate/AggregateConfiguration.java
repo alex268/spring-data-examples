@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -100,12 +101,12 @@ public class AggregateConfiguration extends AbstractJdbcConfiguration {
 	}
 
     @Bean
-	DataSourceInitializer initializer(DataSource dataSource) {
+	DataSourceInitializer initializer(DataSource dataSource, @Value("${config.schema}") String schema) {
 
 		var initializer = new DataSourceInitializer();
 		initializer.setDataSource(dataSource);
 
-		var script = new ClassPathResource("schema.sql");
+		var script = new ClassPathResource(schema);
 		var populator = new ResourceDatabasePopulator(script);
 		initializer.setDatabasePopulator(populator);
 

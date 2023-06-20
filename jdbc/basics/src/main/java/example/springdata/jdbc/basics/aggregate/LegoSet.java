@@ -15,23 +15,22 @@
  */
 package example.springdata.jdbc.basics.aggregate;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.With;
-import lombok.With;
-
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.With;
 import org.springframework.data.annotation.AccessType;
 import org.springframework.data.annotation.AccessType.Type;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.MappedCollection;
+import org.springframework.data.relational.core.mapping.Table;
 
 /**
  * A Lego Set consisting of multiple Blocks and a manual
@@ -41,6 +40,7 @@ import org.springframework.data.relational.core.mapping.MappedCollection;
 @Data
 @AccessType(Type.PROPERTY)
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
+@Table("LEGO_SET")
 public class LegoSet {
 
 	private @Id int id;

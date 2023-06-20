@@ -27,8 +27,8 @@
     </modules>
 
     <properties>
-        <config.url></config.url>
-        <config.driver></config.driver>
+        <config.url>jdbc:hsqldb:mem:test;sql.lowercase_ident=true;sql.syntax_pgs=true</config.url>
+        <config.schema>schema.sql</config.schema>
     </properties>
 
     <dependencies>
@@ -64,7 +64,7 @@
 
             <properties>
                 <config.url>jdbc:postgresql://localhost:5432/postgres?user=postgres&amp;password=postgres</config.url>
-                <config.driver></config.driver>
+                <config.schema>schema_pg.sql</config.schema>
             </properties>
         </profile>
     </profiles>

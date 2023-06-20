@@ -30,11 +30,11 @@ import org.springframework.data.repository.query.Param;
 interface LegoSetRepository extends CrudRepository<LegoSet, Integer> {
 
 	@Query("""
-			SELECT m.name model_name, m.description, l.name set_name
-			  FROM model m
-			  JOIN lego_set l
+			SELECT m."NAME" model_name, m.description, l.name set_name
+			  FROM "MODEL" m
+			  JOIN "LEGO_SET" l
 			  ON m.lego_set = l.id
-			  WHERE :age BETWEEN l.min_age and l.max_age
+			  WHERE :age BETWEEN l."MIN_AGE" and l."MAX_AGE"
 			""")
 	List<ModelReport> reportModelForAge(@Param("age") int age);
 
@@ -44,13 +44,13 @@ interface LegoSetRepository extends CrudRepository<LegoSet, Integer> {
 	 * @return
 	 */
 	@Query("""
-			select a.*, b.handbuch_id as manual_handbuch_id, b.author as manual_author, b.text as manual_text from lego_set a
-			join handbuch b on a.id = b.handbuch_id
+			select a.*, b."HANDBUCH_ID" as manual_handbuch_id, b.author as manual_author, b.text as manual_text from "LEGO_SET" a
+			join "HANDBUCH" b on a.id = b."HANDBUCH_ID"
 			where a.name = :name
 			""")
 	List<LegoSet> findByName(@Param("name") String name);
 
 	@Modifying
-	@Query("UPDATE model set name = lower(name) WHERE name <> lower(name)")
+	@Query("UPDATE \"MODEL\" set \"NAME\" = lower(\"NAME\") WHERE \"NAME\" <> lower(\"NAME\")")
 	int lowerCaseMapKeys();
 }

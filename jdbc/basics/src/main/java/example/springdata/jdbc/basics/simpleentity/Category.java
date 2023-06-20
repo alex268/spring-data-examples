@@ -15,6 +15,8 @@
  */
 package example.springdata.jdbc.basics.simpleentity;
 
+import java.time.LocalDateTime;
+
 import example.springdata.jdbc.basics.aggregate.AgeGroup;
 import example.springdata.jdbc.basics.aggregate.LegoSet;
 import lombok.AccessLevel;
@@ -22,9 +24,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Setter;
 import lombok.With;
-
-import java.time.LocalDateTime;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
 
@@ -37,7 +36,7 @@ import org.springframework.data.annotation.PersistenceCreator;
 @AllArgsConstructor(access = AccessLevel.PRIVATE, onConstructor = @__(@PersistenceCreator))
 public class Category {
 
-	private final @Id @With Long id;
+	private @Id @With Long id;
 	private String name, description;
 	private LocalDateTime created;
 	private @Setter long inserted;

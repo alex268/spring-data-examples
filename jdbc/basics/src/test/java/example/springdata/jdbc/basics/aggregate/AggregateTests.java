@@ -15,21 +15,19 @@
  */
 package example.springdata.jdbc.basics.aggregate;
 
-import static org.assertj.core.api.Assertions.*;
-
-import example.springdata.jdbc.basics.Output;
-
 import java.time.Period;
 import java.util.Arrays;
-import java.util.List;
 
+import example.springdata.jdbc.basics.Output;
 import org.assertj.core.groups.Tuple;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.AutoConfigureDataJdbc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Demonstrates various possibilities to customize the behavior of a repository.
@@ -42,94 +40,99 @@ import org.springframework.test.annotation.DirtiesContext;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class AggregateTests {
 
-	@Autowired LegoSetRepository repository;
+    @Autowired
+    LegoSetRepository repository;
 
-	@Test
-	void exerciseSomewhatComplexEntity() {
+    @BeforeEach
+    public void clearRepository() {
+        repository.deleteAll();
+    }
 
-		var smallCar = createLegoSet("Small Car 01", 5, 12);
-		smallCar.setManual(new Manual("Just put all the pieces together in the right order", "Jens Schauder"));
-		smallCar.addModel("suv", "SUV with sliding doors.");
-		smallCar.addModel("roadster", "Slick red roadster.");
+    @Test
+    void exerciseSomewhatComplexEntity() {
+        var smallCar = createLegoSet("Small Car 01", 5, 12);
+        smallCar.setManual(new Manual("Just put all the pieces together in the right order", "Jens Schauder"));
+        smallCar.addModel("suv", "SUV with sliding doors.");
+        smallCar.addModel("roadster", "Slick red roadster.");
 
-		repository.save(smallCar);
-		var legoSets = repository.findAll();
-		Output.list(legoSets, "Original LegoSet");
-		checkLegoSets(legoSets, "Just put all the pieces together in the right order", 2);
+        repository.save(smallCar);
+        var legoSets = repository.findAll();
+        Output.list(legoSets, "Original LegoSet");
+        checkLegoSets(legoSets, "Just put all the pieces together in the right order", 2);
 
-		smallCar.getManual().setText("Just make it so it looks like a car.");
-		smallCar.addModel("pickup", "A pickup truck with some tools in the back.");
+        smallCar.getManual().setText("Just make it so it looks like a car.");
+        smallCar.addModel("pickup", "A pickup truck with some tools in the back.");
 
-		repository.save(smallCar);
-		legoSets = repository.findAll();
-		Output.list(legoSets, "Updated");
-		checkLegoSets(legoSets, "Just make it so it looks like a car.", 3);
+        repository.save(smallCar);
+        legoSets = repository.findAll();
+        Output.list(legoSets, "Updated");
+        checkLegoSets(legoSets, "Just make it so it looks like a car.", 3);
 
-		smallCar.setManual(new Manual("One last attempt: Just build a car! Ok?", "Jens Schauder"));
+        smallCar.setManual(new Manual("One last attempt: Just build a car! Ok?", "Jens Schauder"));
 
-		repository.save(smallCar);
-		legoSets = repository.findAll();
-		Output.list(legoSets, "Manual replaced");
-		checkLegoSets(legoSets, "One last attempt: Just build a car! Ok?", 3);
-	}
+        repository.save(smallCar);
+        legoSets = repository.findAll();
+        Output.list(legoSets, "Manual replaced");
+        checkLegoSets(legoSets, "One last attempt: Just build a car! Ok?", 3);
+    }
 
-	@Test
-	void customQueries() {
+    @Test
+    void customQueries() {
 
-		var smallCarsSetName = "Small Car - 01";
-		var smallCars = createLegoSet(smallCarsSetName, 5, 10);
-		smallCars.setManual(new Manual("Just put all the pieces together in the right order", "Jens Schauder"));
+        var smallCarsSetName = "Small Car - 01";
+        var smallCars = createLegoSet(smallCarsSetName, 5, 10);
+        smallCars.setManual(new Manual("Just put all the pieces together in the right order", "Jens Schauder"));
 
-		smallCars.addModel("SUV", "SUV with sliding doors.");
-		smallCars.addModel("roadster", "Slick red roadster.");
+        smallCars.addModel("SUV", "SUV with sliding doors.");
+        smallCars.addModel("roadster", "Slick red roadster.");
 
-		var f1Racer = createLegoSet("F1 Racer", 6, 15);
-		f1Racer.setManual(new Manual("Build a helicopter or a plane", "M. Shoemaker"));
-		f1Racer.addModel("F1 Ferrari 2018", "A very fast red car.");
+        var f1Racer = createLegoSet("F1 Racer", 6, 15);
+        f1Racer.setManual(new Manual("Build a helicopter or a plane", "M. Shoemaker"));
+        f1Racer.addModel("F1 Ferrari 2018", "A very fast red car.");
 
-		var constructionVehicles = createLegoSet("Construction Vehicles", 3, 6);
-		constructionVehicles.setManual(
-				new Manual("Build a Road Roler, a Mobile Crane, a Tracked Dumper, or a Backhoe Loader ", "Bob the Builder"));
+        var constructionVehicles = createLegoSet("Construction Vehicles", 3, 6);
+        constructionVehicles.setManual(
+                new Manual("Build a Road Roler, a Mobile Crane, a Tracked Dumper, or a Backhoe Loader ", "Bob the Builder"));
 
-		constructionVehicles.addModel("scoop", "A backhoe loader");
-		constructionVehicles.addModel("Muck", "Muck is a continuous tracked dump truck with an added bulldozer blade");
-		constructionVehicles.addModel("lofty", "A mobile crane");
-		constructionVehicles.addModel("roley",
-				"A road roller that loves to make up songs and frequently spins his eyes when he is excited.");
+        constructionVehicles.addModel("scoop", "A backhoe loader");
+        constructionVehicles.addModel("Muck", "Muck is a continuous tracked dump truck with an added bulldozer blade");
+        constructionVehicles.addModel("lofty", "A mobile crane");
+        constructionVehicles.addModel("roley",
+                "A road roller that loves to make up songs and frequently spins his eyes when he is excited.");
 
-		repository.saveAll(Arrays.asList(smallCars, f1Racer, constructionVehicles));
+        repository.saveAll(Arrays.asList(smallCars, f1Racer, constructionVehicles));
 
-		var report = repository.reportModelForAge(6);
-		Output.list(report, "Model Report");
+        var report = repository.reportModelForAge(6);
+        Output.list(report, "Model Report");
 
-		assertThat(report).hasSize(7)
-				.allMatch(m -> m.description() != null && m.modelName() != null && m.setName() != null);
+        assertThat(report).hasSize(7)
+                .allMatch(m -> m.description() != null && m.modelName() != null && m.setName() != null);
 
-		var updated = repository.lowerCaseMapKeys();
-		// SUV, F1 Ferrari 2018 and Muck get updated
-		assertThat(updated).isEqualTo(3);
+        var updated = repository.lowerCaseMapKeys();
+        // SUV, F1 Ferrari 2018 and Muck get updated
+        assertThat(updated).isEqualTo(3);
 
-		var legoSetsByName = repository.findByName(smallCarsSetName);
-		assertThat(legoSetsByName).hasSize(1);
-	}
+        var legoSetsByName = repository.findByName(smallCarsSetName);
+        assertThat(legoSetsByName).hasSize(1);
+    }
 
-	private LegoSet createLegoSet(String name, int minimumAge, int maximumAge) {
+    private LegoSet createLegoSet(String name, int minimumAge, int maximumAge) {
 
-		var smallCar = new LegoSet();
+        var smallCar = new LegoSet();
 
-		smallCar.setName(name);
-		smallCar.setMinimumAge(Period.ofYears(minimumAge));
-		smallCar.setMaximumAge(Period.ofYears(maximumAge));
+        smallCar.setName(name);
+        smallCar.setMinimumAge(Period.ofYears(minimumAge));
+        smallCar.setMaximumAge(Period.ofYears(maximumAge));
 
-		return smallCar;
-	}
+        return smallCar;
+    }
 
-	private void checkLegoSets(Iterable<LegoSet> legoSets, String manualText, int numberOfModels) {
+    private void checkLegoSets(Iterable<LegoSet> legoSets, String manualText, int numberOfModels) {
 
-		assertThat(legoSets) //
-				.extracting( //
-						ls -> ls.getManual().getText(), //
-						ls -> ls.getModels().size()) //
-				.containsExactly(new Tuple(manualText, numberOfModels));
-	}
+        assertThat(legoSets) //
+                .extracting( //
+                        ls -> ls.getManual().getText(), //
+                        ls -> ls.getModels().size()) //
+                .containsExactly(new Tuple(manualText, numberOfModels));
+    }
 }

@@ -15,12 +15,15 @@
  */
 package example.springdata.jdbc.basics.simpleentity;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
+import org.springframework.data.relational.core.mapping.event.BeforeConvertEvent;
 import org.springframework.data.relational.core.mapping.event.BeforeSaveCallback;
 import org.springframework.data.relational.core.mapping.event.RelationalEvent;
 
@@ -35,6 +38,24 @@ import org.springframework.data.relational.core.mapping.event.RelationalEvent;
 @Configuration
 @EnableJdbcRepositories
 public class CategoryConfiguration extends AbstractJdbcConfiguration {
+	final AtomicLong id = new AtomicLong(0);
+
+    @Bean
+	public ApplicationListener<?> idSetting() {
+
+		return (ApplicationListener<BeforeConvertEvent>) event -> {
+
+			if (event.getEntity() instanceof Category) {
+				setIds((Category) event.getEntity());
+			}
+		};
+	}
+
+	private void setIds(Category category) {
+		if (category.getId() == null) {
+			category.setId(id.incrementAndGet());
+		}
+	}
 
 	/**
 	 * @return {@link ApplicationListener} for {@link RelationalEvent}s.
