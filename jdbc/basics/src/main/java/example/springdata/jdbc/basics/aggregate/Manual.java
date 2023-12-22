@@ -16,7 +16,6 @@
 package example.springdata.jdbc.basics.aggregate;
 
 import lombok.Data;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -27,10 +26,10 @@ import org.springframework.data.relational.core.mapping.Table;
  * @author Jens Schauder
  */
 @Data
-@Table("HANDBUCH")
+@Table("handbuch")
 public class Manual {
 
-	@Column("HANDBUCH_ID")
+	@Column("handbuch_id")
 	private @Id Long id;
 	private String author, text;
 

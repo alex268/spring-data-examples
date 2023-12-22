@@ -16,6 +16,7 @@
 package example.springdata.jdbc.basics.aggregate;
 
 import java.sql.Clob;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,8 +31,14 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.jdbc.core.convert.JdbcCustomConversions;
 import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
+import org.springframework.data.relational.core.dialect.AnsiDialect;
+import org.springframework.data.relational.core.dialect.Dialect;
+import org.springframework.data.relational.core.dialect.LockClause;
 import org.springframework.data.relational.core.mapping.event.BeforeConvertEvent;
+import org.springframework.data.relational.core.sql.IdentifierProcessing;
+import org.springframework.data.relational.core.sql.LockOptions;
 import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
@@ -60,7 +67,7 @@ public class AggregateConfiguration extends AbstractJdbcConfiguration {
 		};
 	}
 
-	private void setIds(LegoSet legoSet) {
+    private void setIds(LegoSet legoSet) {
 
 		if (legoSet.getId() == 0) {
 			legoSet.setId(id.incrementAndGet());
@@ -113,4 +120,33 @@ public class AggregateConfiguration extends AbstractJdbcConfiguration {
 		return initializer;
 	}
 
+    @Override
+    public Dialect jdbcDialect(NamedParameterJdbcOperations operations) {
+        return operations.getJdbcOperations().execute((Connection con) -> {
+            if ("YDB".equals(con.getMetaData().getDatabaseProductName())) {
+                return new AnsiDialect() {
+                    @Override
+                    public LockClause lock() {
+                        return new LockClause() {
+                            @Override
+                            public String getLock(LockOptions lockOptions) {
+                                return "";
+                            }
+
+                            @Override
+                            public LockClause.Position getClausePosition() {
+                                return LockClause.Position.AFTER_ORDER_BY;
+                            }
+                        };
+                    }
+
+                    @Override
+                    public IdentifierProcessing getIdentifierProcessing() {
+                        return IdentifierProcessing.create(new IdentifierProcessing.Quoting("`", "`"), IdentifierProcessing.LetterCasing.AS_IS);
+                    }
+                };
+            }
+            return super.jdbcDialect(operations);
+        });
+    }
 }

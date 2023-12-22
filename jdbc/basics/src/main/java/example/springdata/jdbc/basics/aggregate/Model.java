@@ -15,7 +15,6 @@
  */
 package example.springdata.jdbc.basics.aggregate;
 
-import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 /**
@@ -23,6 +22,6 @@ import org.springframework.data.relational.core.mapping.Table;
  *
  * @author Jens Schauder
  */
-@Table("MODEL")
-public record Model(@Column("NAME") String name, String description) {
+@Table("model")
+public record Model(String name, String description) {
 }

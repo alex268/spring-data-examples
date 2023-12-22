@@ -28,6 +28,7 @@
 
     <properties>
         <config.url>jdbc:hsqldb:mem:test;sql.lowercase_ident=true;sql.syntax_pgs=true</config.url>
+        <config.driver>org.hsqldb.jdbc.JDBCDriver</config.driver>
         <config.schema>schema.sql</config.schema>
     </properties>
 
@@ -64,7 +65,26 @@
 
             <properties>
                 <config.url>jdbc:postgresql://localhost:5432/postgres?user=postgres&amp;password=postgres</config.url>
+                <config.driver>org.postgresql.Driver</config.driver>
                 <config.schema>schema_pg.sql</config.schema>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>with-ydb</id>
+
+            <dependencies>
+                <dependency>
+                    <groupId>tech.ydb.jdbc</groupId>
+                    <artifactId>ydb-jdbc-driver</artifactId>
+                    <version>2.0.0-RC4</version>
+                </dependency>
+            </dependencies>
+
+            <properties>
+                <config.url>jdbc:ydb:grpc://localhost:2136/local</config.url>
+                <config.driver>tech.ydb.jdbc.YdbDriver</config.driver>
+                <config.schema>schema_ydb.sql</config.schema>
             </properties>
         </profile>
     </profiles>
